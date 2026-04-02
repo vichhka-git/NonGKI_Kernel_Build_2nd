@@ -10,6 +10,13 @@ on:
 jobs:
   # OPPO
   ## Oneplus
+  build-oneplus-7-series-los-a16:
+    name: "OnePlus 7 Series (LineageOS A16)"
+    strategy:
+      fail-fast: true
+    uses: ./.github/workflows/build-oneplus-7-series-los-a16.yml
+    secrets: inherit
+
   build-oneplus-8-series-oos13-a13-xtd:
     name: "Oneplus 8 Series (ColorOS 13 A13 XTD)"
     strategy:
