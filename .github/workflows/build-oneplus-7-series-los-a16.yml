@@ -121,17 +121,7 @@ jobs:
           cd $GITHUB_WORKSPACE/device_kernel
 
           # Fix: newer Clang rejects 'register ... asm("sp")' global register variable
-          cat > /tmp/fix_stack_pointer.py << 'PYEOF'
-import sys
-f = 'arch/arm64/include/asm/stack_pointer.h'
-content = open(f).read()
-old = 'register unsigned long current_stack_pointer asm ("sp");'
-new = ('static __always_inline unsigned long _current_stack_pointer(void)'
-       ' { unsigned long sp; asm("mov %0, sp" : "=r"(sp)); return sp; }\n'
-       '#define current_stack_pointer _current_stack_pointer()')
-open(f, 'w').write(content.replace(old, new))
-PYEOF
-          python3 /tmp/fix_stack_pointer.py
+          sed -i 's|register unsigned long current_stack_pointer asm ("sp");|static __always_inline unsigned long _current_stack_pointer(void) { unsigned long sp; asm("mov %0, sp" : "=r"(sp)); return sp; }\n#define current_stack_pointer _current_stack_pointer()|' arch/arm64/include/asm/stack_pointer.h
 
           # Fix: "I" constraint only accepts 0-4095 on ARM64; 1<<TICKET_SHIFT=65536 is out of range
           sed -i 's/: "Q" (lock->owner), "I" (1 << TICKET_SHIFT)/: "Q" (lock->owner), "r" (1 << TICKET_SHIFT)/' arch/arm64/include/asm/spinlock.h
