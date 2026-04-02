@@ -10,7 +10,7 @@ env:
   DEVICE_CODENAME : "guacamoleb"
 
   CUSTOM_CMDS : "CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld LLVM=1"
+  EXTRA_CMDS : "LD=ld.lld LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/LineageOS/android_kernel_oneplus_sm8150.git"
   KERNEL_BRANCH : "lineage-23.2"
@@ -126,6 +126,11 @@ jobs:
           # Fix: "I" constraint only accepts 0-4095 on ARM64; 1<<TICKET_SHIFT=65536 is out of range
           sed -i 's/: "Q" (lock->owner), "I" (1 << TICKET_SHIFT)/: "Q" (lock->owner), "r" (1 << TICKET_SHIFT)/' arch/arm64/include/asm/spinlock.h
           sed -i 's/: "I" (1 << TICKET_SHIFT)/: "r" (1 << TICKET_SHIFT)/g' arch/arm64/include/asm/spinlock.h
+
+          # Fix: LLVM IAS does not support GNU as '.req' register alias directive in VDSO
+          # .S files are C-preprocessed so #define works as a replacement
+          sed -i -E 's/^([a-zA-Z_][a-zA-Z0-9_]*)[[:space:]]+\.req[[:space:]]+([a-zA-Z0-9_]+)$/#define \1 \2/' arch/arm64/kernel/vdso/gettimeofday.S
+          sed -i -E '/^[[:space:]]*\.unreq[[:space:]]+[a-zA-Z_]/d' arch/arm64/kernel/vdso/gettimeofday.S
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
