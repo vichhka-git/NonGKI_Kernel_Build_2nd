@@ -128,8 +128,9 @@ jobs:
           sed -i 's/: "I" (1 << TICKET_SHIFT)/: "r" (1 << TICKET_SHIFT)/g' arch/arm64/include/asm/spinlock.h
 
           # Fix: newer Clang's cc-option test for CONFIG_CC_STACKPROTECTOR_STRONG fails on
-          # this 4.14 kernel's prepare-compiler-check target; fall back to NONE to unblock the build
-          sed -i 's/^CONFIG_CC_STACKPROTECTOR_STRONG=y$/CONFIG_CC_STACKPROTECTOR_NONE=y/' arch/arm64/configs/vendor/sm8150-perf_defconfig
+          # this 4.14 kernel's prepare-compiler-check target; use regular stack protection
+          # (CONFIG_CC_STACKPROTECTOR_REGULAR / -fstack-protector) which Clang always supports
+          sed -i 's/^CONFIG_CC_STACKPROTECTOR_STRONG=y$/CONFIG_CC_STACKPROTECTOR_REGULAR=y/' arch/arm64/configs/vendor/sm8150-perf_defconfig
 
 
       - name: 🧰 Patch Kernel of Re:Kernel
