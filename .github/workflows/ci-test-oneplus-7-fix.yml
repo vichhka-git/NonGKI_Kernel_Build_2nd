@@ -1,0 +1,12 @@
+name: CI Test - OnePlus 7 Fix Verification
+
+on:
+  push:
+    branches:
+      - copilot/fix-build-oneplus-7-series
+
+jobs:
+  test-build:
+    name: "Test OnePlus 7 Series Fix"
+    uses: ./.github/workflows/build-oneplus-7-series-los-a16.yml
+    secrets: inherit
