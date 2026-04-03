@@ -10,7 +10,7 @@ env:
   DEVICE_CODENAME : "guacamoleb"
 
   CUSTOM_CMDS : "CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld"
+  EXTRA_CMDS : "LD=ld.lld LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/LineageOS/android_kernel_oneplus_sm8150.git"
   KERNEL_BRANCH : "lineage-23.2"
